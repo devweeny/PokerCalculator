@@ -1,6 +1,18 @@
 import random
 
 
+class Card:
+    def __init__(self, number, suit):
+        self.number = number
+        self.suit = suit
+
+    def isRed(self):
+        return self.suit == "Hearts" or self.suit == "Diamonds"
+
+    def __str__(self) -> str:
+        return f"{self.number} of {self.suit}"
+
+
 class Deck:
     """A class to represent a deck of cards."""
 
@@ -12,9 +24,9 @@ class Deck:
 
     def _populate_deck(self):
         """Populate the deck with 52 cards."""
-        for i in range(1, 14):
-            for suit in self.suits:
-                self.cards.append((i, suit))
+        for suit in self.suits:
+            for i in range(1, 14):
+                self.cards.append(Card(i, suit))
 
     def shuffle(self):
         """Shuffle the deck of cards."""
@@ -45,7 +57,7 @@ class Deck:
 
     def __str__(self):
         """Return a string representation of the deck."""
-        return str(self.cards)
+        return str([str(c) for c in self.cards])
 
     def to_json(self):
         """Return a JSON representation of the deck."""
