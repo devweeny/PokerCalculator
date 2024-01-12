@@ -71,6 +71,79 @@ def getNum(vals):
     return getNum(vals)
 
 
+def move_from_tableau(game):
+    print("What tableau would you like to move from?")
+    source = getNum(range(7)) - 1
+    if not game.tableau[source]:
+        return
+    print("Would you like to move to (1) another tableau or (2) a foundation?")
+    b = getNum(range(2))
+    match b:
+        case 1:
+            print("What tableau would you like to move to?")
+            dest = getNum(range(7)) - 1
+            card = game.tableau[source][-1]
+            if game.move_to_tableau(card, game.tableau[dest], game.tableau[source]):
+                print("Moved card.")
+            else:
+                print("Invalid move.")
+        case 2:
+            card = game.tableau[source][-1]
+            if game.move_to_foundation(card, game.tableau[source]):
+                print("Moved card.")
+            else:
+                print("Invalid move.")
+
+
+def move_from_waste(game):
+    if game.waste:
+        print("Would you like to move to (1) a tableau or (2) a foundation?")
+        b = getNum(range(2))
+        match b:
+            case 1:
+                print("What tableau would you like to move to?")
+                dest = getNum(range(7)) - 1
+                card = game.waste[-1]
+                if game.move_to_tableau(card, game.tableau[dest], game.waste):
+                    print("Moved card.")
+                else:
+                    print("Invalid move.")
+            case 2:
+                card = game.waste[-1]
+                if game.move_to_foundation(card, game.waste):
+                    print("Moved card.")
+                else:
+                    print("Invalid move.")
+    else:
+        print("No cards in waste.")
+
+
+def move_from_foundation(game):
+    if any(game.foundation):
+        print("What foundation would you like to move from?")
+        source = getNum(range(4)) - 1
+        print(
+            "Would you like to move to (1) a tableau or (2) another foundation?")
+        b = getNum(range(2))
+        match b:
+            case 1:
+                print("What tableau would you like to move to?")
+                dest = getNum(range(7)) - 1
+                card = game.foundation[source][-1]
+                if game.move_to_tableau(card, game.tableau[dest], game.foundation[source]):
+                    print("Moved card.")
+                else:
+                    print("Invalid move.")
+            case 2:
+                card = game.foundation[source][-1]
+                if game.move_to_foundation(card, game.foundation[source]):
+                    print("Moved card.")
+                else:
+                    print("Invalid move.")
+    else:
+        print("No cards in foundation.")
+
+
 def menu(game):
     print("What would you like to do?")
     print("Options: \n (1) Draw from stock \n (2) Move a card from tableau \n (3) Move a card from waste \n (4) Move a card from a foundation \n (5) Quit")
@@ -79,72 +152,11 @@ def menu(game):
         case 1:
             game.draw()
         case 2:
-            print("What tableau would you like to move from?")
-            source = getNum(range(7)) - 1
-            if not game.tableau[source]:
-                return
-            print("Would you like to move to (1) another tableau or (2) a foundation?")
-            b = getNum(range(2))
-            match b:
-                case 1:
-                    print("What tableau would you like to move to?")
-                    dest = getNum(range(7)) - 1
-                    card = game.tableau[source][-1]
-                    if game.move_to_tableau(card, game.tableau[dest], game.tableau[source]):
-                        print("Moved card.")
-                    else:
-                        print("Invalid move.")
-                case 2:
-                    card = game.tableau[source][-1]
-                    if game.move_to_foundation(card, game.tableau[source]):
-                        print("Moved card.")
-                    else:
-                        print("Invalid move.")
+            move_from_tableau(game)
         case 3:
-            if game.waste:
-                print("Would you like to move to (1) a tableau or (2) a foundation?")
-                b = getNum(range(2))
-                match b:
-                    case 1:
-                        print("What tableau would you like to move to?")
-                        dest = getNum(range(7)) - 1
-                        card = game.waste[-1]
-                        if game.move_to_tableau(card, game.tableau[dest], game.waste):
-                            print("Moved card.")
-                        else:
-                            print("Invalid move.")
-                    case 2:
-                        card = game.waste[-1]
-                        if game.move_to_foundation(card, game.waste):
-                            print("Moved card.")
-                        else:
-                            print("Invalid move.")
-            else:
-                print("No cards in waste.")
+            move_from_waste(game)
         case 4:
-            if any(game.foundation):
-                print("What foundation would you like to move from?")
-                source = getNum(range(4)) - 1
-                print(
-                    "Would you like to move to (1) a tableau or (2) another foundation?")
-                b = getNum(range(2))
-                match b:
-                    case 1:
-                        print("What tableau would you like to move to?")
-                        dest = getNum(range(7)) - 1
-                        card = game.foundation[source][-1]
-                        if game.move_to_tableau(card, game.tableau[dest], game.foundation[source]):
-                            print("Moved card.")
-                        else:
-                            print("Invalid move.")
-                    case 2:
-                        card = game.foundation[source][-1]
-                        if game.move_to_foundation(card, game.foundation[source]):
-                            print("Moved card.")
-                        else:
-                            print("Invalid move.")
-            else:
-                print("No cards in foundation.")
+            move_from_foundation(game)
         case 5:
             exit()
         case _:
