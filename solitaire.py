@@ -61,12 +61,17 @@ class Solitaire:
         print("\n")
 
         max_tableau_height = max(len(t) for t in self.tableau)
-        print("Tableaus")
+
+        tableaus_width = len(self.tableau)*15
+
+        print("Tableaus".center(tableaus_width))
         for i in range(1, len(self.tableau)+1):
-            print(f" {i}".ljust(15), end=' ')
+            print(f"      {i}".ljust(15), end=' ')
         print()
-        print("-"*len(self.tableau)*15)
+        print("-"*tableaus_width)
+
         for i in range(max_tableau_height):
+            print(i+1, "|", end='  ')
             for t in self.tableau:
                 if i < len(t):
                     if t[i].flipped:
@@ -75,9 +80,10 @@ class Solitaire:
                         print("[ ]".ljust(15), end=' ')
                 else:
                     print(" ".ljust(15), end=' ')
-            print("\n")
+            print("\n  |  ")
 
         # Print Stock and Waste
+        print()
         print(f"Stock: [ ({len(self.stock)}) ]")
         print(
             f"Waste: [ {self.waste[-1] if self.waste else ''} ({len(self.waste)}) ]")
@@ -93,6 +99,7 @@ def getNum(vals):
 
 
 def move_from_tableau(game):
+    # TODO: Allow a stack to move in a tableau to another tableau. ex: a 9H, 8C, 7H can move onto a 10S
     print("What tableau would you like to move from?")
     source = getNum(range(7)) - 1
     if not game.tableau[source]:
