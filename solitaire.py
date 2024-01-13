@@ -32,6 +32,7 @@ class Solitaire:
         for f in self.foundation:
             if (not f and card.number == 1) or (f and card.suit == f[0].suit and card.number == f[-1].number + 1):
                 f.append(card)
+                card.flip()
                 from_list.remove(card)
                 if len(from_list) > 0:
                     from_list[-1].flip()
@@ -42,6 +43,7 @@ class Solitaire:
 
         if (not tableau and card.number == 13) or (tableau and card.number == tableau[-1].number - 1 and card.isRed() != tableau[-1].isRed()):
             tableau.append(card)
+            card.flip()
             from_list.remove(card)
             if len(from_list) > 0:
                 from_list[-1].flip()
