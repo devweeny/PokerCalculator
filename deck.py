@@ -51,7 +51,8 @@ class Deck:
         self.cards = []
         self.suits = ["Spades", "Hearts", "Diamonds", "Clubs"]
         self._populate_deck()
-        os.system('color')
+        if (os.name == 'nt'):
+            os.system('color')
 
     def _populate_deck(self):
         for suit in self.suits:
