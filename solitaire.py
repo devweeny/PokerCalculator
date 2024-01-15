@@ -4,12 +4,16 @@ import deck
 class Solitaire:
     def __init__(self):
         self.deck = deck.Deck()
+        self.difficulty = 1
         self.deck.shuffle()
         self.tableau = [[], [], [], [], [], [], []]
         self.foundation = [[], [], [], []]
         self.waste = []
         self.stock = []
         self._deal()
+
+    def setDifficulty(self, difficulty):
+        self.difficulty = difficulty
 
     def _deal(self):
         for x in range(7):
@@ -24,7 +28,8 @@ class Solitaire:
             self.stock = self.waste
             self.waste = []
         else:
-            for i in range(3):
+            draw_amount = 1 if self.difficulty == 1 else 3
+            for _ in range(draw_amount):
                 if len(self.stock) > 0:
                     self.waste.append(self.stock.pop())
 
@@ -73,7 +78,10 @@ class Solitaire:
         print("-"*tableaus_width)
 
         for i in range(max_tableau_height):
-            print(f"{i+1} |".ljust(4), end='')
+            if i + 1 < 10:
+                print(f"{i+1} |".ljust(4), end='')
+            else:
+                print(f"{i+1}|".ljust(4), end='')
             for t in self.tableau:
                 if i < len(t):
                     if t[i].flipped:
@@ -211,7 +219,9 @@ def game_over(game):
 
 def play_game():
     game = Solitaire()
-
+    print("What difficulty would you like to play? \n (1) Easy Mode (Draw 1 card at a time) \n (2) Hard Mode (Draw 3 cards at a time)")
+    difficulty = getNum(range(2))
+    game.setDifficulty(difficulty)
     while True:
         print("\n")
         print("-"*15)
@@ -222,7 +232,8 @@ def play_game():
             a = getNum(range(2))
             match a:
                 case 1:
-                    game = Solitaire()
+                    play_game()
+                    return
                 case 2:
                     exit()
         game.print_game()
