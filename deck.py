@@ -1,4 +1,5 @@
 import random
+import os
 
 
 class Card:
@@ -20,10 +21,10 @@ class Card:
             "Clubs": "♣",
             "Spades": "♠"
         }
-        return symbols.get(self.suit, "")
+        return symbols.get(self.suit, "z")
 
     def get_color_code(self):
-        return "\033[91m" if self.isRed() else "\033[30m"
+        return "\033[91m" if self.isRed() else '\033[37m'
 
     def reset_color(self):
         return "\033[0m"
@@ -40,6 +41,7 @@ class Deck:
         self.cards = []
         self.suits = ["Spades", "Hearts", "Diamonds", "Clubs"]
         self._populate_deck()
+        os.system('color')
 
     def _populate_deck(self):
         for suit in self.suits:

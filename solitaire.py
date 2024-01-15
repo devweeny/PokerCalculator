@@ -39,12 +39,14 @@ class Solitaire:
                 return True
         return False
 
-    def move_to_tableau(self, card, tableau, from_list):
+    def move_to_tableau(self, cards: list, tableau, from_list):
+        card = cards[0]
 
         if (not tableau and card.number == 13) or (tableau and card.number == tableau[-1].number - 1 and card.isRed() != tableau[-1].isRed()):
-            tableau.append(card)
-            card.flip()
-            from_list.remove(card)
+            for c in cards:
+                tableau.append(c)
+                c.flip()
+                from_list.remove(c)
             if len(from_list) > 0:
                 from_list[-1].flip()
             return True
@@ -71,7 +73,7 @@ class Solitaire:
         print("-"*tableaus_width)
 
         for i in range(max_tableau_height):
-            print(i+1, "|", end='  ')
+            print(f"{i+1} |".ljust(4), end='')
             for t in self.tableau:
                 if i < len(t):
                     if t[i].flipped:
@@ -91,33 +93,46 @@ class Solitaire:
 
 
 def getNum(vals):
-    vals = [str(v + 1) for v in vals]
-    a = input("Input (" + ", ".join(vals) + "): ")
-    if a in vals:
+    val_string = [str(v + 1) for v in vals]
+    a = input("Input (" + ", ".join(val_string) + "): ")
+    if a in val_string:
         return int(a)
     return getNum(vals)
 
 
 def move_from_tableau(game):
-    # TODO: Allow a stack to move in a tableau to another tableau. ex: a 9H, 8C, 7H can move onto a 10S
     print("What tableau would you like to move from?")
     source = getNum(range(7)) - 1
-    if not game.tableau[source]:
+    tableau = game.tableau[source]
+    if not tableau:
         return
-    print("Would you like to move to (1) another tableau or (2) a foundation?")
-    b = getNum(range(2))
+    indices = [i for i in range(
+        len(tableau)) if tableau[i].flipped]
+    index = -1
+    if (len(indices) > 1):
+        print("What starting index of card would you like to move?")
+        index = getNum(indices) - 1
+    if (index == len(tableau) - 1 or index == -1):
+        print("Would you like to move to (1) another tableau or (2) a foundation?")
+        b = getNum(range(2))
+    else:
+        b = 1
+    cards = []
+    if (index != -1):
+        for i in range(index, len(tableau)):
+            cards.append(tableau[i])
+    else:
+        cards.append(tableau[-1])
     match b:
         case 1:
             print("What tableau would you like to move to?")
             dest = getNum(range(7)) - 1
-            card = game.tableau[source][-1]
-            if game.move_to_tableau(card, game.tableau[dest], game.tableau[source]):
+            if game.move_to_tableau(cards, game.tableau[dest], tableau):
                 print("Moved card.")
             else:
                 print("Invalid move.")
         case 2:
-            card = game.tableau[source][-1]
-            if game.move_to_foundation(card, game.tableau[source]):
+            if game.move_to_foundation(cards[0], tableau):
                 print("Moved card.")
             else:
                 print("Invalid move.")
@@ -132,7 +147,7 @@ def move_from_waste(game):
                 print("What tableau would you like to move to?")
                 dest = getNum(range(7)) - 1
                 card = game.waste[-1]
-                if game.move_to_tableau(card, game.tableau[dest], game.waste):
+                if game.move_to_tableau([card], game.tableau[dest], game.waste):
                     print("Moved card.")
                 else:
                     print("Invalid move.")
@@ -150,24 +165,20 @@ def move_from_foundation(game):
     if any(game.foundation):
         print("What foundation would you like to move from?")
         source = getNum(range(4)) - 1
-        print(
-            "Would you like to move to (1) a tableau or (2) another foundation?")
-        b = getNum(range(2))
-        match b:
-            case 1:
-                print("What tableau would you like to move to?")
-                dest = getNum(range(7)) - 1
-                card = game.foundation[source][-1]
-                if game.move_to_tableau(card, game.tableau[dest], game.foundation[source]):
-                    print("Moved card.")
-                else:
-                    print("Invalid move.")
-            case 2:
-                card = game.foundation[source][-1]
-                if game.move_to_foundation(card, game.foundation[source]):
-                    print("Moved card.")
-                else:
-                    print("Invalid move.")
+        found = game.foundation[source]
+
+        if len(found) < 1:
+            print("No cards in foundation.")
+            return
+
+        print("What tableau would you like to move to?")
+        dest = getNum(range(7)) - 1
+        card = found[-1]
+        if game.move_to_tableau([card], game.tableau[dest], found):
+            print("Moved card.")
+        else:
+            print("Invalid move.")
+
     else:
         print("No cards in foundation.")
 
@@ -191,14 +202,29 @@ def menu(game):
             pass
 
 
+def game_over(game):
+    for f in game.foundation:
+        if len(f) < 13:
+            return False
+    return True
+
+
 def play_game():
     game = Solitaire()
-    ended = False
 
-    while not ended:
+    while True:
         print("\n")
         print("-"*15)
         print("\n")
+        if (game_over(game)):
+            print(
+                "Congratulations! You've won solitare. Would you like to: \n (1) Play again? \n (2) Quit")
+            a = getNum(range(2))
+            match a:
+                case 1:
+                    game = Solitaire()
+                case 2:
+                    exit()
         game.print_game()
         menu(game)
 
