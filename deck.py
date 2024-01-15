@@ -21,7 +21,16 @@ class Card:
             "Clubs": "♣",
             "Spades": "♠"
         }
-        return symbols.get(self.suit, "z")
+        return symbols.get(self.suit)
+
+    def get_rank(self):
+        ranks = {
+            1: "A",
+            11: "J",
+            12: "Q",
+            13: "K"
+        }
+        return ranks.get(self.number, str(self.number))
 
     def get_color_code(self):
         return "\033[91m" if self.isRed() else '\033[37m'
@@ -33,7 +42,8 @@ class Card:
         symbol = self.get_symbol()
         color_code = self.get_color_code()
         reset_code = self.reset_color()
-        return f"{color_code}{self.number} {symbol}{reset_code}"
+        rank = self.get_rank()
+        return f"{color_code}{rank} {symbol}{reset_code}"
 
 
 class Deck:

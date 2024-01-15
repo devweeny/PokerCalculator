@@ -62,9 +62,9 @@ class Solitaire:
         print("-"*20)
         for f in self.foundation:
             if len(f) == 0:
-                print("[ ]", end='\t')
+                print("[ ]", end=' ')
             else:
-                print("[", f[-1], "]", end='\t')
+                print("[", f[-1], "]", end=' ')
         print("\n")
 
         max_tableau_height = max(len(t) for t in self.tableau)
